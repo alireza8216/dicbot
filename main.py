@@ -6,7 +6,9 @@ import time
 from telegram.chataction import ChatAction
 import wikipedia
 import requests
+import os 
 
+TOKEN = '5000124728:AAFFQSfSGqQFCvj5bJeWFVP0e9JCo7Sd-Ns'
 updater = Updater('5000124728:AAFFQSfSGqQFCvj5bJeWFVP0e9JCo7Sd-Ns')
 my_chat_id = 1087559057
 
@@ -102,7 +104,12 @@ dis.add_handler(favor2_command)
 
 
 
-
-
-updater.start_polling()
+PORT = int(os.environ.get('PORT', '8443'))
+updater.start_webhook(
+    listen="0.0.0.0",
+    port=int(PORT),
+    url_path=TOKEN,
+    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
+)
+#updater.start_polling()
 updater.idle()
