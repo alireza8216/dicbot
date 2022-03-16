@@ -87,6 +87,7 @@ about2_hand = MessageHandler(Filters.regex(r'درباره'),about)
 term_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 term2_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 favor_command = MessageHandler(Filters.regex(r'ارتباط با من'),favor)
+favor2_command = MessageHandler(Filters.regex(r'ارتباط'),favor)
 
 dis = updater.dispatcher
 dis.add_handler(start_hand)
@@ -96,6 +97,8 @@ dis.add_handler(about2_hand)
 dis.add_handler(term_hand)
 dis.add_handler(term2_hand)
 dis.add_handler(favor_command)
+dis.add_handler(favor2_command)
+
 
 
 
