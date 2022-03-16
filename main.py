@@ -16,7 +16,7 @@ def start(update , context):
     chat_id = update.message.chat_id
     context.bot.send_chat_action(chat_id,ChatAction.TYPING)
     context.bot.sendMessage(my_chat_id, '{} {} with usernam:({}) has started robot'.format(user['first_name'],user['last_name'],user['username']))
-    rpmks = [['ارتبات با من '],]
+    rpmks = [['ارتباط با من '],]
     context.bot.sendMessage(chat_id,'سلام {} {} به ربات علیرضا رضایی با من خوش امدید.'.format(user['first_name'],user['last_name']), reply_markup = ReplyKeyboardMarkup(rpmks))
 
 def favor(update , context):
@@ -25,7 +25,7 @@ def favor(update , context):
     chat_id = update.message.chat_id
     keyboards = [
         [InlineKeyboardButton('رفتن به سایت من ','https://alirezarezaei.pythonanywhere.com')],
-        [InlineKeyboardButton('ارتبات با من در تلگرام ','https://t.me/a8888ralireza')]
+        [InlineKeyboardButton('ارتباط با من در تلگرام ','https://t.me/a8888ralireza')]
     ]
     context.bot.sendMessage(chat_id,'چه کاری میتونم براتون انجام بدم؟',reply_markup = InlineKeyboardMarkup(keyboards))
 
