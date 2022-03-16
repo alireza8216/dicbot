@@ -104,12 +104,6 @@ dis.add_handler(favor2_command)
 
 
 
-PORT = int(os.environ.get('PORT', '8443'))
-updater.start_webhook(
-    listen="0.0.0.0",
-    port=int(PORT),
-    url_path=TOKEN,
-    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
-)
-#updater.start_polling()
+#
+updater.start_polling()
 updater.idle()
