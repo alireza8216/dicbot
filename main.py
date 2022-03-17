@@ -79,7 +79,34 @@ def term(update,context):
     except TypeError:
         update.message.reply_text('متاسفانه کلمه ی مورد نظر شما در دیکشنری ما یافت نشد!')
 
-
+def blog(update,context):
+    global my_chat_id
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+    msg = update.message.text
+    title = msg.replace('مقاله','')
+    if title.isdigit():
+        context.bot.send_chat_action(chat_id,ChatAction.TYPING)
+        title = int(title)
+        result = requests.get('https://alirezarezaei.pythonanywhere.com/blog/api/')
+        try:
+            article = result[title]['fields']
+            mozo = article['name']
+            pic = 'https://alirezarezaei.pythonanywhere.com/media/'+article['pic']
+            date = article['date']
+            category = article['category']
+            intro = article['intro']
+            important = article['important']
+            text1 = article['text1']
+            text2 = article['text2']
+            context.bot.sendMessage(my_chat_id,"{} {} with usernam:({}) has seen blog number ({})".format(user['first_name'],user['last_name'],user['username'],str(title)))
+            context.bot.send_photo(chat_id,pic)
+            update.message.reply_text('موضوع:{} \n تاریخ:{} \n کتگوری:{} \n متن:{} \n {} \n {} \n {}'.format(mozo,date,category,intro,important,text1,text2))
+        
+        except IndexError:
+            update.message.reply('متاسفانه هنوز مقاله ی شماره {} نوشته نشده است'.format(str(title)))
+    else:
+        update.message.reply('لطفا بعد از کلمه ی مقاله شماره ی مقاله را وارد کنید')
 
 #handelers
 start_hand = CommandHandler('start',start)
@@ -90,6 +117,7 @@ term_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 term2_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 favor_command = MessageHandler(Filters.regex(r'ارتباط با من'),favor)
 favor2_command = MessageHandler(Filters.regex(r'ارتباط'),favor)
+blog_hand = MessageHandler(Filters.regex("^مقاله"),blog)
 
 dis = updater.dispatcher
 dis.add_handler(start_hand)
@@ -100,6 +128,7 @@ dis.add_handler(term_hand)
 dis.add_handler(term2_hand)
 dis.add_handler(favor_command)
 dis.add_handler(favor2_command)
+dis.add_handler(blog_hand)
 
 PORT = int(os.environ.get('PORT', '8443'))
 
