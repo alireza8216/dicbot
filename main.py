@@ -117,7 +117,7 @@ term_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 term2_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 favor_command = MessageHandler(Filters.regex(r'ارتباط با من'),favor)
 favor2_command = MessageHandler(Filters.regex(r'ارتباط'),favor)
-blog_hand = MessageHandler(Filters.regex("^مقاله"),blog)
+blog_hand = MessageHandler(Filters.regex("مقاله"),blog)
 
 dis = updater.dispatcher
 dis.add_handler(start_hand)
