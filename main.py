@@ -83,7 +83,7 @@ def term(update,context):
 
 #handelers
 start_hand = CommandHandler('start',start)
-jan_hand = MessageHandler(Filters.regex('ربات'),jan)
+jan_hand = MessageHandler(Filters.regex('^ربات$'),jan)
 about_hand = MessageHandler(Filters.regex(r'ربات درباره'),about)
 about2_hand = MessageHandler(Filters.regex(r'درباره'),about)
 term_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
