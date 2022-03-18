@@ -7,6 +7,7 @@ from telegram.chataction import ChatAction
 import wikipedia
 import requests
 import os 
+from translate import Translator
 
 TOKEN = '5000124728:AAFFQSfSGqQFCvj5bJeWFVP0e9JCo7Sd-Ns'
 updater = Updater('5000124728:AAFFQSfSGqQFCvj5bJeWFVP0e9JCo7Sd-Ns')
@@ -85,28 +86,48 @@ def blog(update,context):
     chat_id = update.message.chat_id
     msg = update.message.text
     title = msg.replace('مقاله','')
-    if title.isdigit():
-        context.bot.send_chat_action(chat_id,ChatAction.TYPING)
-        title = int(title)
-        result = requests.get('https://alirezarezaei.pythonanywhere.com/blog/api/')
-        try:
-            article = result[title]['fields']
-            mozo = article['name']
-            pic = 'https://alirezarezaei.pythonanywhere.com/media/'+article['pic']
-            date = article['date']
-            category = article['category']
-            intro = article['intro']
-            important = article['important']
-            text1 = article['text1']
-            text2 = article['text2']
-            context.bot.sendMessage(my_chat_id,"{} {} with usernam:({}) has seen blog number ({})".format(user['first_name'],user['last_name'],user['username'],str(title)))
-            context.bot.send_photo(chat_id,pic)
-            update.message.reply_text('موضوع:{} \n تاریخ:{} \n کتگوری:{} \n متن:{} \n {} \n {} \n {}'.format(mozo,date,category,intro,important,text1,text2))
+    #if title.isdigit():
+    context.bot.send_chat_action(chat_id,ChatAction.TYPING)
+    title = int(title) - 1
+    result = requests.get('https://alirezarezaei.pythonanywhere.com/blog/api/').json()
+    try:
+        article = result[title]['fields']
+        mozo = article['name']
+        pic = 'https://alirezarezaei.pythonanywhere.com/media/'+article['pic']
+        date = article['date']
+        category = article['category']
+        intro = article['intro']
+        important = article['important']
+        text1 = article['text1']
+        text2 = article['text2']
+        context.bot.sendMessage(my_chat_id,"{} {} with usernam:({}) has seen blog number ({})".format(user['first_name'],user['last_name'],user['username'],str(title)))
+        context.bot.send_photo(chat_id,pic)
+        update.message.reply_text('موضوع:{} \n تاریخ:{} \n کتگوری:{} \n متن:{} \n {} \n {} \n {}'.format(mozo,date,category,intro,important,text1,text2))
         
-        except IndexError:
-            update.message.reply('متاسفانه هنوز مقاله ی شماره {} نوشته نشده است'.format(str(title)))
-    else:
-        update.message.reply('لطفا بعد از کلمه ی مقاله شماره ی مقاله را وارد کنید')
+    except IndexError:
+        update.message.reply_text('متاسفانه هنوز مقاله ی شماره {} نوشته نشده است'.format(str(title)))
+    #else:
+    #    update.message.reply_text('لطفا بعد از کلمه ی مقاله شماره ی مقاله را وارد کنید')
+
+def tarjom(update , context):
+    global my_chat_id
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+    context.bot.send_chat_action(chat_id,ChatAction.TYPING)
+    msg = update.message.text
+    title = msg.replace("ترجمه",'')
+    tl = Translator( to_lang='fa')
+    fa = tl.translate(title)
+    context.bot.sendMessage(my_chat_id,"{} {} with usernam:({}) has seen translation of ({})".format(user['first_name'],user['last_name'],user['username'],title))
+    update.message.reply_text(fa)
+
+def dastan(update,context):
+    global my_chat_id
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+    context.bot.send_chat_action(chat_id,ChatAction.TYPING)
+    result = requests.get('http://api.codebazan.ir/dastan/')
+    update.message.reply_text(str(result.text))
 
 #handelers
 start_hand = CommandHandler('start',start)
@@ -118,6 +139,8 @@ term2_hand = MessageHandler(Filters.regex(r'اصطلاح'),term)
 favor_command = MessageHandler(Filters.regex(r'ارتباط با من'),favor)
 favor2_command = MessageHandler(Filters.regex(r'ارتباط'),favor)
 blog_hand = MessageHandler(Filters.regex("مقاله"),blog)
+tarjom_hand = MessageHandler(Filters.regex('ترجمه'),tarjom)
+dastan_hand = MessageHandler(Filters.regex('داستان کوتاه'),dastan)
 
 dis = updater.dispatcher
 dis.add_handler(start_hand)
@@ -129,15 +152,17 @@ dis.add_handler(term2_hand)
 dis.add_handler(favor_command)
 dis.add_handler(favor2_command)
 dis.add_handler(blog_hand)
+dis.add_handler(tarjom_hand)
+dis.add_handler(dastan_hand)
 
 PORT = int(os.environ.get('PORT', '8443'))
 
-updater.start_webhook(
-    listen="0.0.0.0",
-    port=int(PORT),
-    url_path=TOKEN,
-    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
-)
+#updater.start_webhook(
+#    listen="0.0.0.0",
+#    port=int(PORT),
+#    url_path=TOKEN,
+#    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
+#)
 
 #
 updater.start_polling()
