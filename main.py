@@ -34,6 +34,22 @@ def favor(update , context):
 
     context.bot.sendMessage(my_chat_id, '{} {} with usernam:({}) has seen ertebat ba man'.format(user['first_name'],user['last_name'],user['username']))
 
+def helpp(update,context):
+    global my_chat_id
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+    context.bot.send_chat_action(chat_id,ChatAction.TYPING)
+    text = '''سلام به ربات من خوش آمدید ، خدمات این ربات به صورت رایگان و به شرح زیر است :
+۱.اگر از کلمه ی درباره ... استفاده کنید و به جای سه نقطه کلمه ی مورد نظر خودتون رو بزارید میتونید در مورد اون مورد سرچ کنید و جواب را بگیرید 
+۲. اگر از اصطلاح ... استفاده کنید میتونید معنی اصطلاح پزشکی رو به همراه تلفظ آن ببینید .
+۳.اگر از مقاله ... استفاده کنید و به جای سه نقطه شماره ی مقاله رو بزارید میتونید  میتونید اون مقاله رو از سایت من دریافت کنید  
+۴. اگر ترجمه ... استفاده کنید میتوانید ترجمه ی فارسی کلمه یا متن مورد نظر که به جای سه نقطه وارد میکنید را دریافت کنید 
+۵.اگر عبارت داستان کوتاه را سرچ کنید میتوانید یک داستان کوتاه به صورت رندوم دریافت کنید 
+۶. با عبارت درباره من میتونید با من در ارتباط باشید 
+با تشکر علیرضا رضایی'''
+    update.mesage.reply_text(text)
+    context.bot.sendMessage(my_chat_id, '{} {} with usernam:({}) has seen rahnama estefade'.format(user['first_name'],user['last_name'],user['username']))
+
 def jan(update , context):
     user = update.message.from_user
     chat_id = update.message.chat_id
@@ -141,6 +157,9 @@ favor2_command = MessageHandler(Filters.regex(r'ارتباط'),favor)
 blog_hand = MessageHandler(Filters.regex("مقاله"),blog)
 tarjom_hand = MessageHandler(Filters.regex('ترجمه'),tarjom)
 dastan_hand = MessageHandler(Filters.regex('داستان کوتاه'),dastan)
+help1_hand = MessageHandler(Filters.regex('راهنما'),helpp)
+help2_hand = CommandHandler('help',helpp)
+
 
 dis = updater.dispatcher
 dis.add_handler(start_hand)
@@ -154,6 +173,8 @@ dis.add_handler(favor2_command)
 dis.add_handler(blog_hand)
 dis.add_handler(tarjom_hand)
 dis.add_handler(dastan_hand)
+dis.add_handler(help1_hand)
+dis.add_handler(help2_hand)
 
 PORT = int(os.environ.get('PORT', '8443'))
 
