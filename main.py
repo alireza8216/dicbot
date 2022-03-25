@@ -45,7 +45,7 @@ def helpp(update,context):
     text4 = "4.میتوانید با وارد کردن (مقاله ...) و شماره ی مقاله مقاله ی مورد نظر را از سایت من دریافت کنید"
     text5 = "5. میتوانید با وارد کردن (داستان کوتاه) به صورت رندوم یک داستان کوتاه دریافت کنید (:"
     text6 = "6. میتوانید با وارد کردن (ارتباط با من) با من ارتباط برقرار کنید"
-    update.mesage.reply_text(text1+"\n"+text2+"\n"+text3+"\n"+text4+"\n"+text5+"\n"+text6)
+    update.message.reply_text(text1+"\n"+text2+"\n"+text3+"\n"+text4+"\n"+text5+"\n"+text6)
     context.bot.sendMessage(my_chat_id, '{} {} with usernam:({}) has seen rahnama estefade'.format(user['first_name'],user['last_name'],user['username']))
 
 def jan(update , context):
@@ -176,12 +176,12 @@ dis.add_handler(help2_hand)
 
 PORT = int(os.environ.get('PORT', '8443'))
 
-updater.start_webhook(
-    listen="0.0.0.0",
-    port=int(PORT),
-    url_path=TOKEN,
-    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
-)
+#updater.start_webhook(
+#    listen="0.0.0.0",
+#    port=int(PORT),
+#    url_path=TOKEN,
+#    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
+#)
 
 #
 updater.start_polling()
