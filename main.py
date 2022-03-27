@@ -1,13 +1,18 @@
-from telegram.ext import CommandHandler , MessageHandler ,Updater
+from telegram.ext import CommandHandler , MessageHandler ,Updater 
 from telegram import ReplyKeyboardMarkup , keyboardbutton
 from telegram import InlineKeyboardButton , InlineKeyboardMarkup
 from telegram.ext.filters import Filters
-import time
 from telegram.chataction import ChatAction
 import wikipedia
 import requests
 import os 
 from translate import Translator
+
+#inlinequery libraries
+from telegram.ext import InlineQueryHandler
+from telegram import InputTextMessageContent
+from telegram import InlineQueryResultArticle
+from uuid import uuid4
 
 TOKEN = '5000124728:AAFFQSfSGqQFCvj5bJeWFVP0e9JCo7Sd-Ns'
 updater = Updater('5000124728:AAFFQSfSGqQFCvj5bJeWFVP0e9JCo7Sd-Ns')
@@ -120,8 +125,7 @@ def blog(update,context):
         
     except IndexError:
         update.message.reply_text('متاسفانه هنوز مقاله ی شماره {} نوشته نشده است'.format(str(title)))
-    #else:
-    #    update.message.reply_text('لطفا بعد از کلمه ی مقاله شماره ی مقاله را وارد کنید')
+    
 
 def tarjom(update , context):
     global my_chat_id
@@ -143,6 +147,63 @@ def dastan(update,context):
     result = requests.get('http://api.codebazan.ir/dastan/')
     update.message.reply_text(str(result.text))
 
+#inline queries
+def inline(update, context):
+    global my_chat_id
+    user = update.message.from_user
+    chat_id = update.message.chat_id
+    text = update.inline_query.query
+    res = list()
+
+    #about
+    wiki = wikipedia.summary(text)
+
+    #estelah
+    url = 'https://www.dictionaryapi.com/api/v3/references/medical/json/{}?key=7e92201a-48a3-4983-afea-da6583d565ef'.format(text)
+    api_estelah = requests.get(url)
+    data = api_estelah.json()
+    mozo = data[0]['meta']['id']
+    talf = data[0]['hwi']['prs'][0]['mw']
+    mortabets = data[0]['meta']['stems']
+    mortabet = ''
+    for i in mortabets:
+        mortabet = mortabet + ' ' + i
+    manis = data[0]['shortdef']
+    mani = ''
+    for i in manis:
+        mani = mani + i + '\n'
+    
+    estelah = 'اصطلاح:{}\n تلفظ:{} \n کلمات مرتبط:{} \n معانی:{} \n پرسش از :{}'.format(mozo,talf,mortabet,mani,user['first_name'])
+
+    #blogs
+    num = text -1
+    article_api = requests.get('https://alirezarezaei.pythonanywhere.com/blog/api/').json()
+
+    article = article_api[num]['fields']
+    mozo_blog = article['name']
+    pic_blog = 'https://alirezarezaei.pythonanywhere.com/media/'+article['pic']
+    date_blog = article['date']
+    category_blog = article['category']
+    intro_blog = article['intro']
+    important_blog = article['important']
+    text1_blog = article['text1']
+    text2_blog = article['text2']
+    blog = 'موضوع:{} \n تاریخ:{} \n کتگوری:{} \n متن:{} \n {} \n {} \n {}'.format(mozo_blog,date_blog,category_blog,intro_blog,important_blog,text1_blog,text2_blog)
+
+    #tarjome
+    tl = Translator( to_lang='fa')
+    fa = tl.translate(text)
+
+    #set inlines
+    res.append(InlineQueryResultArticle(id=uuid4(), title='درباره ی این کلمه', input_message_content=InputTextMessageContent(wiki)))
+    res.append(InlineQueryResultArticle(id=uuid4(), title='اصطلاح پزشکی', input_message_content=InputTextMessageContent(estelah)))
+    res.append(InlineQueryResultArticle(id=uuid4(), title='مقاله به این شماره', input_message_content=InputTextMessageContent(blog)))
+    res.append(InlineQueryResultArticle(id=uuid4(), title='ترجمش کن', input_message_content=InputTextMessageContent(fa)))
+    
+    #answer
+    context.bot.answerInlineQuery(results = res)
+
+
 #handelers
 start_hand = CommandHandler('start',start)
 jan_hand = MessageHandler(Filters.regex('^ربات$'),jan)
@@ -157,6 +218,7 @@ tarjom_hand = MessageHandler(Filters.regex('ترجمه'),tarjom)
 dastan_hand = MessageHandler(Filters.regex('داستان کوتاه'),dastan)
 help1_hand = MessageHandler(Filters.regex('راهنما'),helpp)
 help2_hand = CommandHandler('help',helpp)
+inline_hand = InlineQueryHandler(inline)
 
 
 dis = updater.dispatcher
@@ -173,15 +235,16 @@ dis.add_handler(tarjom_hand)
 dis.add_handler(dastan_hand)
 dis.add_handler(help1_hand)
 dis.add_handler(help2_hand)
+dis.add_handler(inline_hand)
 
 PORT = int(os.environ.get('PORT', '8443'))
 
-#updater.start_webhook(
-#    listen="0.0.0.0",
-#    port=int(PORT),
-#    url_path=TOKEN,
-#    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
-#)
+updater.start_webhook(
+    listen="0.0.0.0",
+    port=int(PORT),
+    url_path=TOKEN,
+    webhook_url='https://dicbotpython.herokuapp.com/' + TOKEN
+)
 
 #
 updater.start_polling()
