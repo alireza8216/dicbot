@@ -248,5 +248,5 @@ updater.start_webhook(
 )
 
 #
-updater.start_polling()
+#updater.start_polling()
 updater.idle()
