@@ -122,7 +122,7 @@ def blog(update,context):
         context.bot.sendMessage(my_chat_id,"{} {} with usernam:({}) has seen blog number ({})".format(user['first_name'],user['last_name'],user['username'],str(title)))
         context.bot.send_photo(chat_id,pic)
         update.message.reply_text('موضوع:{} \n تاریخ:{} \n کتگوری:{} \n متن:{} \n {} \n {} \n {}'.format(mozo,date,category,intro,important,text1,text2))
-        update.message.reply_text('link:   https://alirezarezaei.pythonanywhere.com/blog/{}'.format(title))
+        update.message.reply_text('link:   https://alirezarezaei.pythonanywhere.com/blog/{}'.format(int(title)))
         
     except IndexError:
         update.message.reply_text('متاسفانه هنوز مقاله ی شماره {} نوشته نشده است'.format(str(title)))
