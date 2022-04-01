@@ -201,7 +201,7 @@ def inline(update, context):
     res.append(InlineQueryResultArticle(id=uuid4(), title='ترجمش کن', input_message_content=InputTextMessageContent(fa)))
     
     #answer
-    context.bot.answerInlineQuery(results = res)
+    context.bot.answerInlineQuery(result = res)
 
 
 #handelers
