@@ -107,10 +107,10 @@ def blog(update,context):
     title = msg.replace('مقاله','')
     #if title.isdigit():
     context.bot.send_chat_action(chat_id,ChatAction.TYPING)
-    title = int(title) - 1
+    hi = int(title) - 1
     result = requests.get('https://alirezarezaei.pythonanywhere.com/blog/api/').json()
     try:
-        article = result[title]['fields']
+        article = result[hi]['fields']
         mozo = article['name']
         pic = 'https://alirezarezaei.pythonanywhere.com/media/'+article['pic']
         date = article['date']
